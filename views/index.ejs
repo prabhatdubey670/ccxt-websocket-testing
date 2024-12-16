@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trading Bot</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <h1>Trading Bot - Binance</h1>
+    <div id="trade-info">
+      <p id="trade-status">Waiting for trade...</p>
+    </div>
+
+    <button id="start-trade">Start Trade</button>
+
+    <script>
+      const socket = io();
+
+      // Listen for trade updates from the server
+      socket.on('tradeUpdate', (data) => {
+        document.getElementById(
+          'trade-status'
+        ).textContent = `Trade completed: ${JSON.stringify(data)}`;
+      });
+
+      socket.on('tradeError', (error) => {
+        document.getElementById('trade-status').textContent = `Error: ${error}`;
+      });
+
+      // Emit start trade event when button is clicked
+      document.getElementById('start-trade').addEventListener('click', () => {
+        socket.emit('startTrade', {
+          symbol: 'BTC/USDT',
+          amount: 0.01,
+        });
+      });
+    </script>
+  </body>
+</html>
